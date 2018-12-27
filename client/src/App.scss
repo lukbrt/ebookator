@@ -1,10 +1,16 @@
-$green: greenyellow;
-$dark: rgb(54, 54, 54);
-$light: lightgray;
+@import 'variables';
+
+html, body {
+    font-family: 'Thasadith', sans-serif;
+}
 
 a {
     text-decoration: none;
     color: $green;
+}
+
+label {
+    font-size: 1.2rem;
 }
 
 .App {
@@ -47,8 +53,44 @@ a {
 	justify-content: space-between;
 }
 
+.space-between {
+    justify-content: space-between;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
 .txt-green {
     color: $green;
+}
+
+.dark-thick-border, %dark-thick-border {
+    border: 6px solid $dark;
+    padding: 30px 15px;
+}
+
+.dark-text
+{
+    color: $dark;
+}
+
+form {
+    margin-bottom: 15px;
+
+    &.styled-form 
+    {
+        @extend %dark-thick-border;
+        display: flex;
+        flex-direction: column;
+    
+        & > div 
+        {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    }
 }
 
 @keyframes App-logo-spin {
@@ -70,6 +112,10 @@ button, input
     font-size: 1.1rem;
 }
 
+button, input, label {
+    font-weight: bold;
+}
+
 button
 {
     text-transform: uppercase;
@@ -88,7 +134,26 @@ button:hover
     color: antiquewhite;
 }
 
+.btn-orange {
+    color: $orange;
+    border-color: $orange;
+}
+
 .green-btn
 {
     border-color: greenyellow;
+}
+
+.box
+{
+    background-color: #282c34;
+    border: 4px solid $dark;
+    color: $green;
+}
+
+.thumbnail {
+    width: 200px;
+    height: 150px;
+    border: 2px solid $light;
+    // width: fit-content
 }

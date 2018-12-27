@@ -9,6 +9,10 @@ import
 // import logo from './logo.svg';
 import './App.scss';
 import GuestPanel from './components/Header/GuestPanel';
+import LogIn from './components/LogIn';
+import Register from './components/Register';
+import Main from './components/Main/Main';
+import BookItem from './components/Main/BookItem';
 
 class App extends Component
 {
@@ -60,27 +64,15 @@ class App extends Component
 							<GuestPanel />
 						</div>
 					</header>
-					
 
-					<main>
-						<div className="container">
-							<p>{this.state.response}</p>
-							<form onSubmit={this.handleSubmit}>
-								<p>
-									<strong>Post to Server:</strong>
-								</p>
-								<input
-									type="text"
-									value={this.state.post}
-									onChange={e => this.setState({ post: e.target.value })}
-								/>
-								<button type="submit">Submit</button>
-							</form>
-							<p>{this.state.responseToPost}</p>
-						</div>
-
-					</main>
-
+					<div className="container">
+						<BookItem title={"The lord of the rings"} />
+						<Switch>
+							<Route exact path="/" component={Main} />
+							<Route path="/login" component={LogIn} />
+							<Route path="/register" component={Register} />
+						</Switch>
+					</div>
 
 					<footer
 						style={{

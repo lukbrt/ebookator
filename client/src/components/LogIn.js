@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
-import '../../App.scss';
+import '../App.scss';
+import { Formik } from 'formik';
 
 const styles = {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    flexDirection: "column"
 };
+
+const formStyles = {
+    display: "flex",
+    flexDirection: "column"
+}
 
 class LogIn extends Component 
 {
@@ -17,10 +24,21 @@ class LogIn extends Component
     {
         return (
             <div
-                style={styles}
+                style={styles} 
+                className="dark-text"
             >
-                <form>
-                    
+                <h1>Logowanie:</h1>
+                <form className="dark-thick-border" style={formStyles}>
+                    <div className="d-flex space-between align-items-center">
+                        <label htmlFor="login">Login</label>
+                        <input type="text" name="login" id="login" />
+                    </div>
+                    <div className="d-flex space-between align-items-center">
+                        <label htmlFor="pswd">Hasło</label>
+                        <input type="password" name="pswd" id="pswd" />
+
+                    </div>
+                    <button type="submit">Zaloguj</button>
                 </form>
             </div>
         );

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import '../../App.scss';
 import './HeaderStyles.scss';
 
@@ -20,8 +21,8 @@ class GuestPanel extends Component
             <div
                 style={styles}
             >
-                <button className="btn-light">Zaloguj</button>
-                <button className="btn-light">Zarejestruj</button>
+                <button className="btn-light"><Link to="/login">Zaloguj</Link></button>
+                <button className="btn-light"><Link to="/register">Zarejestruj</Link></button>
             </div>
         );
     }
