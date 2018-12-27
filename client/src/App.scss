@@ -1,0 +1,94 @@
+$green: greenyellow;
+$dark: rgb(54, 54, 54);
+$light: lightgray;
+
+a {
+    text-decoration: none;
+    color: $green;
+}
+
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    animation: App-logo-spin infinite 20s linear;
+    height: 40vmin;
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+    min-height: 50%;
+    padding-bottom: 10px;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.d-flex {
+	display: flex;
+}
+
+.flex-in-row {
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.txt-green {
+    color: $green;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+button, input
+{
+    padding: .5em 1em;
+    margin: .4em .8em;
+    background-color: transparent;
+    border: 2px solid $dark;
+    color:  $dark;
+    font-size: 1.1rem;
+}
+
+button
+{
+    text-transform: uppercase;
+    transition: all 1s;
+}
+
+button:hover
+{
+    border-color: greenyellow;
+    color: greenyellow;
+}
+
+.btn-light
+{
+    border-color: $light;
+    color: antiquewhite;
+}
+
+.green-btn
+{
+    border-color: greenyellow;
+}

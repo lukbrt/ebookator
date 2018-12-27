@@ -1,0 +1,23 @@
+$dark: rgb(54, 54, 54);
+$light: lightgray;
+.logo
+{
+    color: greenyellow;
+    align-self: flex-start;
+    font-weight: 100;
+    // border-left: 8px solid greenyellow;
+
+    &:before 
+    {
+        content: '';
+        border-left: 5px solid greenyellow;
+        transition: all 0.8s;
+    }
+
+    &:hover:before
+    {
+        border-left-width: 15px;
+        border-left-color: crimson;
+    }
+}
+
