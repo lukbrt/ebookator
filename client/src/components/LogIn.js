@@ -31,11 +31,11 @@ class LogIn extends Component
                 <form className="dark-thick-border" style={formStyles}>
                     <div className="d-flex space-between align-items-center">
                         <label htmlFor="login">Login</label>
-                        <input type="text" name="login" id="login" />
+                        <input type="text" name="login" id="login" minLength="3" required />
                     </div>
                     <div className="d-flex space-between align-items-center">
                         <label htmlFor="pswd">Hasło</label>
-                        <input type="password" name="pswd" id="pswd" />
+                        <input type="password" name="pswd" id="pswd" minLength="6" required />
 
                     </div>
                     <button type="submit">Zaloguj</button>

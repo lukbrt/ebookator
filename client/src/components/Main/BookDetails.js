@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import styled from 'styled-components'
 import '../../App.scss';
+import { callApi } from '../../Helpers';
+import { Link } from 'react-router-dom';
 
 const StyledItem = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding: 5px 10px;
+    padding: 10px 2.5%;
     margin: 10px;
     width: fit-content;
 `;
@@ -15,24 +17,40 @@ const StyledItem = styled.div`
 class BookDetails extends Component 
 {
     state = {
-        title: '',
-        avatar: '',
-        description: '',
+        Title: '',
+        Thumbnail: '',
+        Description: '',
         releaseDate: '',
-        pages: 0,
-        isColor: false,
-        language: 'PL'
+        Pages: 0,
+        IsColorful: false,
+        Language: 'PL'
+    }
+
+    componentDidMount()
+	{
+        const { id } = this.props.match.params;
+
+		callApi(`book/${id}`)
+			.then(res => this.setState({ ...res }))
+			.catch(err => console.log(err));
     }
 
     render()
     {
-        const {title} = this.props;
+        const { Title, Thumbnail, Description, Pages, IsColorful, Language } = this.state;
 
         return (
             <StyledItem className="box">
-                <img src="" alt="" className="thumbnail" />
+                <div className="close">
+                    <Link to="/">
+                        <img src="https://img.icons8.com/nolan/64/000000/delete-sign.png" />
+                    </Link>
+                </div>
+
+                <img src={Thumbnail} alt={Title} className="thumbnail details-img" />
                 <div>
-                    <h3>{title}</h3>
+                    <h3>{Title}</h3>
+                    <p>{Description}</p>
                     <button className="btn-orange">Wypożycz</button>
                 </div>
             </StyledItem>

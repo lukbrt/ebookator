@@ -26,17 +26,17 @@ class Register extends Component
                 <form className="styled-form">
                     <div>
                         <label htmlFor="login">Login</label>
-                        <input type="text" name="login" id="login" />
+                        <input type="text" name="login" id="login" minLength="3" required />
                     </div>
 
                     <div>
                         <label htmlFor="pswd">Hasło</label>
-                        <input type="password" name="pswd" id="pswd" />
+                        <input type="password" name="pswd" id="pswd" minLength="6" required />
                     </div>
 
                     <div>
                         <label htmlFor="emailAddress">E-mail</label>
-                        <input type="email" name="emailAddress" id="emailAddress" />
+                        <input type="email" name="emailAddress" id="emailAddress" required />
                     </div>
 
                     <div>

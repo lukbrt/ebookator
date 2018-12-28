@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components'
 import '../../App.scss';
+import { Link } from 'react-router-dom';
 
 const StyledItem = styled.div`
     display: flex;
@@ -10,6 +11,7 @@ const StyledItem = styled.div`
     padding: 5px 10px;
     margin: 10px;
     width: fit-content;
+    text-align: center;
 `;
 
 class BookItem extends Component 
@@ -20,14 +22,18 @@ class BookItem extends Component
 
     render()
     {
-        const {title} = this.props;
+        const { book } = this.props;
 
         return (
             <StyledItem className="box">
-                <img src="" alt="" className="thumbnail" />
+                <img src={book.Thumbnail} alt="" className="thumbnail" />
                 <div>
-                    <h3>{title}</h3>
-                    <button className="btn-light">Szczegóły</button>
+                    <h3>{book.Title}</h3>
+                    <button className="btn-light">
+                        <Link to={`/book/${book.IdBook}`}>
+                            Szczegóły
+                        </Link>
+                    </button>
                 </div>
             </StyledItem>
         );

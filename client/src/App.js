@@ -13,23 +13,27 @@ import LogIn from './components/LogIn';
 import Register from './components/Register';
 import Main from './components/Main/Main';
 import BookItem from './components/Main/BookItem';
+import BookItems from './components/Main/BookItems';
+import BookDetails from './components/Main/BookDetails';
 
 class App extends Component
 {
 	state = {
+		books: [],
+		categories: [],
 		response: '',
 		post: '',
 		responseToPost: '',
 	};
 	componentDidMount()
 	{
-		this.callApi()
-			.then(res => this.setState({ response: res.express }))
+		this.callApi('books')
+			.then(res => this.setState({ books: res }))
 			.catch(err => console.log(err));
 	}
-	callApi = async () =>
+	callApi = async (path) =>
 	{
-		const response = await fetch('/api/hello');
+		const response = await fetch(`/${path}`);
 		const body = await response.json();
 		if (response.status !== 200) throw Error(body.message);
 		return body;
@@ -51,9 +55,16 @@ class App extends Component
 
 	render()
 	{
+		const flex = {
+			display: "flex",
+			flexDirection: "column",
+			justifyContent: "space-between",
+			minHeight: "100vh"
+		};
+
 		return (
 			<Router>
-				<div>
+				<div style={flex}>
 
 					<header className="App-header">
 						<div className="container d-flex flex-in-row">
@@ -66,9 +77,14 @@ class App extends Component
 					</header>
 
 					<div className="container">
-						<BookItem title={"The lord of the rings"} />
+						{/* <BookItems books={this.state.books} /> */}
 						<Switch>
-							<Route exact path="/" component={Main} />
+							<Route exact path="/"
+								component={() => <BookItems books={this.state.books} />}
+							/>
+							<Route path="/book/:id"
+								component={BookDetails}
+							/>
 							<Route path="/login" component={LogIn} />
 							<Route path="/register" component={Register} />
 						</Switch>
