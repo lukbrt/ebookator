@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../App.scss';
+import { Link } from 'react-router-dom';
 import { Formik } from 'formik';
 
 const styles = {
@@ -11,7 +12,8 @@ const styles = {
 
 const formStyles = {
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    paddingTop: "10px"
 }
 
 class LogIn extends Component 
@@ -29,6 +31,11 @@ class LogIn extends Component
             >
                 <h1>Logowanie:</h1>
                 <form className="dark-thick-border" style={formStyles}>
+                <div className="close">
+                    <Link to="/">
+                        <img style={{width: "36px"}} src="https://img.icons8.com/nolan/64/000000/delete-sign.png" />
+                    </Link>
+                </div>
                     <div className="d-flex space-between align-items-center">
                         <label htmlFor="login">Login</label>
                         <input type="text" name="login" id="login" minLength="3" required />

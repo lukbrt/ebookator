@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import '../App.scss';
+import { Link } from 'react-router-dom';
 import { Formik } from 'formik';
 
 const styles = {
@@ -23,7 +24,13 @@ class Register extends Component
                 className="dark-text"
             >
                 <h1>Rejestracja:</h1>
-                <form className="styled-form">
+                <form className="styled-form" style={{paddingTop: "10px"}}>
+                    <div className="close">
+                        <Link to="/">
+                            <img style={{ width: "36px" }} src="https://img.icons8.com/nolan/64/000000/delete-sign.png" />
+                        </Link>
+                    </div>
+
                     <div>
                         <label htmlFor="login">Login</label>
                         <input type="text" name="login" id="login" minLength="3" required />
