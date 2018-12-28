@@ -23,21 +23,28 @@ class BookDetails extends Component
         releaseDate: '',
         Pages: 0,
         IsColorful: false,
-        Language: 'PL'
+        Language: 'PL',
+        Author_IdAuthor: 0,
+        Author: {}
     }
 
     componentDidMount()
-	{
+    {
         const { id } = this.props.match.params;
 
-		callApi(`book/${id}`)
-			.then(res => this.setState({ ...res }))
-			.catch(err => console.log(err));
+        callApi(`book/${id}`)
+            .then(res => this.setState({ ...res }))
+            .then(() => {
+                callApi(`author/${this.state.Author_IdAuthor}`)
+                    .then(res => this.setState({ Author: res }))
+                    .catch(err => console.log(err));
+            })
+            .catch(err => console.log(err));
     }
 
     render()
     {
-        const { Title, Thumbnail, Description, Pages, IsColorful, Language } = this.state;
+        const { Title, Thumbnail, Description, Pages, IsColorful, Language, Author } = this.state;
 
         return (
             <StyledItem className="box">
@@ -48,10 +55,42 @@ class BookDetails extends Component
                 </div>
 
                 <img src={Thumbnail} alt={Title} className="thumbnail details-img" />
-                <div>
-                    <h3>{Title}</h3>
-                    <p>{Description}</p>
+                <div className="txt-light">
+                    <h1 style={{textAlign: "center"}}>{Title}</h1>
+                    <p className="txt-light">{Description}</p>
+
+                    <table style={{fontSize: "1.4em"}}>
+                        <tbody>
+                            <tr>
+                                <th>Język</th>
+                                <td>{Language}</td>
+                            </tr>
+                            <tr>
+                                <th>Liczba stron</th>
+                                <td>{Pages}</td>
+                            </tr>
+                            <tr>
+                                <th>W kolorze</th>
+                                <td>{IsColorful ? 'tak' : 'nie'}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <button className="btn-orange">Wypożycz</button>
+                    <hr />
+                    <h2>O autorze:</h2>
+                    <table style={{fontSize: "1.4em"}}>
+                        <tbody>
+                            <tr>
+                                <th>Autor</th>
+                                <td>{Author.Firstname} {Author.Surname}</td>
+                            </tr>
+                            <tr>
+                                <th>Pochodzenie</th>
+                                <td>{Author.Origin}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </StyledItem>
         );

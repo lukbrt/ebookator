@@ -143,6 +143,24 @@ app.get('/book/:id', (req, res) =>
 	});
 });
 
+app.get('/author/:id', (req, res) =>
+{
+	const { id } = req.params;
+
+	let query = `SELECT * FROM Author
+    	WHERE IdAuthor = ?;`;
+
+	db.all(query, [id], (err, author) =>
+	{
+		if (err)
+		{
+			return console.error(err.message);
+		}
+
+		res.send(author[0]);
+	});
+});
+
 
 app.post('/api/world', (req, res) =>
 {
