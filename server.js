@@ -16,51 +16,34 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/register', (req, res) =>
 {
 	connectDb();
-
 	const { Login, Password, Email, Firstname, Surname } = req.body;
 	const Salt = 'abc';
 
 	console.log(req.body);
 
-	// bcrypt.hash(req.body.password, 10, function(err, hash){
-	// 	if(err) {
-	// 	   return res.status(500).json({
-	// 		  error: err.message
-	// 	   });
-	// 	}
-	// 	else {
-	// 	   const user = new User({
-	// 		  _id: new  mongoose.Types.ObjectId(),
-	// 		  email: req.body.email,
-	// 		  password: hash    
-	// 	   });
-	// 	   user.save().then(function(result) {
-	// 		  console.log(result);
-	// 		  res.status(200).json({
-	// 			 success: 'New user has been created'
-	// 		  });
-	// 	   }).catch(error => {
-	// 		  res.status(500).json({
-	// 			 error: err
-	// 		  });
-	// 	   });
-	// 	}
-	// });
-	
-	let query = `INSERT INTO User(Login, Password, Email, Salt, Firstname, Surname) 
-	VALUES(?, ?, ?, ?, ?, ?)`;
-
-	db.run(query, [Login, Password, Email, Salt, Firstname, Surname], function (err)
-	{
-		if (err)
-		{
-			// res.statusText = "Błąd rejestracji: " + err.message;
-			// res.send("Błąd rejestracji: " + err.message);
-			res.status(500).send({ message: err.message });
-			return console.log(err.message);
+	bcrypt.hash(Password, 10, function(err, hash){
+		if(err) {
+			db.close();
+		   return res.status(500).send({
+			message: err.message
+		   });
 		}
-
-		res.send({message: "Zarejestrowano pomyślnie."});
+		else {
+			let query = `INSERT INTO User(Login, Password, Email, Salt, Firstname, Surname) 
+			VALUES(?, ?, ?, ?, ?, ?)`;
+		
+			db.run(query, [Login, hash, Email, Salt, Firstname, Surname], function (err)
+			{
+				if (err)
+				{
+					db.close();
+					
+					return res.status(500).send({ message: err.message });
+				}
+		
+				res.send({message: "Zarejestrowano pomyślnie."});
+			});
+		}
 	});
 
 	db.close();
