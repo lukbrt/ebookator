@@ -50,7 +50,7 @@ class BookDetails extends Component
             <StyledItem className="box">
                 <div className="close">
                     <Link to="/">
-                        <img src="https://img.icons8.com/nolan/64/000000/delete-sign.png" />
+                        <img src="https://img.icons8.com/nolan/64/000000/delete-sign.png" alt="close" />
                     </Link>
                 </div>
 

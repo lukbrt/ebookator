@@ -2,87 +2,105 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 5000;
-// const Sequelize = require('sequelize');
-// const sequelize = new Sequelize('database', '', '', {
-//   host: 'localhost',
-//   dialect: 'sqlite',
-//   operatorsAliases: false,
-
-//   pool: {
-//     max: 5,
-//     min: 0,
-//     acquire: 30000,
-//     idle: 10000
-//   },
-
-//   storage: 'db/database.db'
-// });
-
-
-// import {User} from 'model/User';
-// const User = require('./model/User');
-
-// const User = sequelize.define('user', {
-//   FirstName: {
-//       type: Sequelize.STRING
-//   },
-//   LastName: {
-//       type: Sequelize.STRING
-//   },
-//   Login: {
-//       type: Sequelize.STRING
-//   },
-//   Password: {
-//       type: Sequelize.STRING
-//   },
-//   Email: {
-//       type: Sequelize.STRING
-//   }
-// });
+const bcrypt = require('bcryptjs');
+const User = require('./model/User');
 
 const sqlite3 = require('sqlite3').verbose();
-let db = new sqlite3.Database('./db/database.db');
+let db;
+connectDb = () => { db = new sqlite3.Database('./db/database.db') };
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.get('/api/hello', (req, res) => {
-//   sequelize
-//   .authenticate()
-//   .then(() => {
-//     console.log('*******Connection has been established successfully.******');
-//   })
-//   .catch(err => {
-//     console.error('Unable to connect to the database:', err);
-//   });
 
-// // force: true will drop the table if it already exists
-// User.sync({ force: false }).then(() =>
-// {
-//     // Table created
-//     return User.create({
-//         FirstName: 'John',
-//         LastName: 'Hancock',
-//         Login: 'admin',
-//         Password: 'admin',
-//         Email: 'mail@gmail.com'
-//     });
-// });
+app.post('/register', (req, res) =>
+{
+	connectDb();
 
+	const { Login, Password, Email, Firstname, Surname } = req.body;
+	const Salt = 'abc';
 
+	console.log(req.body);
 
-// // User.destroy({
-// //   where: {},
-// //   truncate: true
-// // })
+	// bcrypt.hash(req.body.password, 10, function(err, hash){
+	// 	if(err) {
+	// 	   return res.status(500).json({
+	// 		  error: err.message
+	// 	   });
+	// 	}
+	// 	else {
+	// 	   const user = new User({
+	// 		  _id: new  mongoose.Types.ObjectId(),
+	// 		  email: req.body.email,
+	// 		  password: hash    
+	// 	   });
+	// 	   user.save().then(function(result) {
+	// 		  console.log(result);
+	// 		  res.status(200).json({
+	// 			 success: 'New user has been created'
+	// 		  });
+	// 	   }).catch(error => {
+	// 		  res.status(500).json({
+	// 			 error: err
+	// 		  });
+	// 	   });
+	// 	}
+	// });
+	
+	let query = `INSERT INTO User(Login, Password, Email, Salt, Firstname, Surname) 
+	VALUES(?, ?, ?, ?, ?, ?)`;
 
-// User.findAll().then(users => console.log(users));
+	db.run(query, [Login, Password, Email, Salt, Firstname, Surname], function (err)
+	{
+		if (err)
+		{
+			// res.statusText = "Błąd rejestracji: " + err.message;
+			// res.send("Błąd rejestracji: " + err.message);
+			res.status(500).send({ message: err.message });
+			return console.log(err.message);
+		}
 
-//   res.send({ express: 'Hello From Express' });
-// });
+		res.send({message: "Zarejestrowano pomyślnie."});
+	});
+
+	db.close();
+});
+
+app.post('/login', (req, res) => {
+	connectDb();
+	const { Login } = req.body;
+	const EnteredPassword = req.body.Password;
+
+	let query = `SELECT * FROM User
+    			WHERE Login = ?;`;
+
+	db.all(query, [Login], (err, users) =>
+	{
+		if (err)
+		{
+			return console.error(err.message);
+		}
+
+		const dbUser = users[0];
+
+		if (dbUser.Login === Login && dbUser.Password === EnteredPassword)
+		{
+			res.end("Zalogowano!");
+			console.log("Zalogowano!");
+		}
+		else
+		{
+			res.end("NIE zalogowano!");
+			console.log("NIE zalogowano!");
+		}
+	});
+
+	db.close();
+});
 
 app.get('/books', (req, res) =>
 {
+	connectDb();
 	let books = [];
 	let query = `SELECT * FROM Ebook
               ORDER BY IdBook DESC;`;
@@ -105,13 +123,14 @@ app.get('/books', (req, res) =>
 		res.send(books);
 		// books = rows;
 	});
-	// db.close();
+	db.close();
 
 	// res.send(books);
 });
 
 app.get('/cats', (req, res) =>
 {
+	connectDb();
 	let query = `SELECT * FROM Genre;`;
 
 	db.all(query, [], (err, genres) =>
@@ -123,10 +142,13 @@ app.get('/cats', (req, res) =>
 
 		res.send(genres);
 	});
+
+	db.close();
 });
 
 app.get('/book/:id', (req, res) =>
 {
+	connectDb();
 	const { id } = req.params;
 
 	let query = `SELECT * FROM Ebook
@@ -141,10 +163,13 @@ app.get('/book/:id', (req, res) =>
 
 		res.send(book[0]);
 	});
+
+	db.close();
 });
 
 app.get('/author/:id', (req, res) =>
 {
+	connectDb();
 	const { id } = req.params;
 
 	let query = `SELECT * FROM Author
@@ -159,6 +184,8 @@ app.get('/author/:id', (req, res) =>
 
 		res.send(author[0]);
 	});
+
+	db.close();
 });
 
 
