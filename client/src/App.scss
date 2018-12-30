@@ -10,6 +10,10 @@ a {
     color: $green;
 }
 
+a:hover {
+    color: rgb(141, 221, 22);
+}
+
 label {
     font-size: 1.2rem;
 }

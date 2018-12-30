@@ -110,6 +110,7 @@ class Register extends Component
                     style={{
                         fontSize: "1.4em", 
                         fontWeight: "bolder",
+                        marginBottom: "0",
                         display: `${this.state.status === '' ? "none" : "block"}`
                     }}>{this.state.status}</p>
                 </form>
