@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import '../App.scss';
 import { Link } from 'react-router-dom';
-import { sendData } from '../Helpers';
+import { sendPost } from '../Helpers';
+import { Redirect } from 'react-router-dom'
 // import { Formik } from 'formik';
 
 const styles = {
@@ -20,7 +21,7 @@ const formStyles = {
 class LogIn extends Component 
 {
     state = {
-
+        status: ''
     }
 
     handleInputChange = (event) => {
@@ -36,16 +37,35 @@ class LogIn extends Component
     handleSubmit = (event) => {
         event.preventDefault();
         console.log(this.state);
-        sendData('/login', this.state, (res) => {
-            try 
-            {
-                console.log(res);
-            }
-            catch (error) 
-            {
-                console.log(error);
-            }
-        });
+
+        sendPost('/login', this.state)
+            .then(res => {
+                const { message, Login, IdUser, Token } = res;
+                this.setState({ 
+                    status: message,
+                });
+
+                if (Token)
+                {
+                    this.setState({
+                        Login: Login,
+                        IdUser: IdUser
+                    });
+                    const now = new Date();
+                    now.setTime(now.getTime() + 1 * 3600 * 1000);
+                    document.cookie = `Login=${Login}; IdUser=${IdUser}; Token=${Token}; expires=${now.toUTCString()}; path=/`;
+                    document.cookie = `IdUser=${IdUser}; expires=${now.toUTCString()}; path=/`;
+                    document.cookie = `Token=${Token}; expires=${now.toUTCString()}; path=/`;
+                }
+
+            });
+    }
+
+    renderRedirect = () => {
+        if (this.state.IdUser) {
+            window.location.reload();
+            return <Redirect push to='/'  />
+        }
     }
 
     render()
@@ -76,7 +96,15 @@ class LogIn extends Component
 
                     </div>
                     <button type="submit">Zaloguj</button>
+                    <p 
+                    style={{
+                        fontSize: "1.4em", 
+                        fontWeight: "bolder",
+                        marginBottom: "0",
+                        display: `${this.state.status === '' ? "none" : "block"}`
+                    }}>{this.state.status}</p>
                 </form>
+                {this.renderRedirect()}
             </div>
         );
     }

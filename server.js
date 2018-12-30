@@ -4,6 +4,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const bcrypt = require('bcryptjs');
 const User = require('./model/User');
+const jwt = require('jsonwebtoken');
 
 const sqlite3 = require('sqlite3').verbose();
 let db;
@@ -21,6 +22,7 @@ app.post('/register', (req, res) =>
 
 	console.log(req.body);
 
+<<<<<<< HEAD
 	bcrypt.hash(Password, 10, function(err, hash){
 		if(err) {
 			db.close();
@@ -43,6 +45,20 @@ app.post('/register', (req, res) =>
 		
 				res.send({message: "Zarejestrowano pomyślnie."});
 			});
+=======
+	const salt = bcrypt.genSaltSync(10);
+	const hash = bcrypt.hashSync(Password, salt);
+	
+	let query = `INSERT INTO User(Login, Password, Email, Salt, Firstname, Surname) 
+	VALUES(?, ?, ?, ?, ?, ?)`;
+
+	db.run(query, [Login, hash, Email, Salt, Firstname, Surname], function (err)
+	{
+		if (err)
+		{
+			res.status(500).send({ message: err.message });
+			return console.log(err.message);
+>>>>>>> authorize-user
 		}
 	});
 
@@ -50,9 +66,23 @@ app.post('/register', (req, res) =>
 });
 
 app.post('/login', (req, res) => {
-	connectDb();
 	const { Login } = req.body;
 	const EnteredPassword = req.body.Password;
+
+	if (!Login || Login.length < 3)
+	{
+		return res.status(500).json({
+			message: "Login jest zbyt krótki!"
+		 });
+	}
+	else if (!EnteredPassword || EnteredPassword.length < 6)
+	{
+		return res.status(500).json({
+			message: "Hasło jest zbyt krótkie!"
+		 });
+	}
+
+	connectDb();
 
 	let query = `SELECT * FROM User
     			WHERE Login = ?;`;
@@ -60,22 +90,56 @@ app.post('/login', (req, res) => {
 	db.all(query, [Login], (err, users) =>
 	{
 		if (err)
+		{ 
+			console.error(err.message);
+			res.status(500).send({
+				message: "Unauthorised: Użytkownik nie istnieje!"
+			});
+		}
+
+		if (users.length === 0)
 		{
-			return console.error(err.message);
+			return res.status(401).send({
+				message: "Unauthorised: Użytkownik nie istnieje!"
+			});
 		}
 
 		const dbUser = users[0];
 
-		if (dbUser.Login === Login && dbUser.Password === EnteredPassword)
+		if (dbUser.Login === Login)
 		{
-			res.end("Zalogowano!");
-			console.log("Zalogowano!");
+			const isPasswordValid = bcrypt.compareSync(EnteredPassword, dbUser.Password);
+			if (isPasswordValid)
+			{
+				console.log("Zalogowano!");
+
+				const JWTToken = jwt.sign({
+						Login: Login,
+						_id: dbUser.IdUser
+					},
+					'secret',
+					{
+							expiresIn: '1h'
+					});
+					return res.status(200).json({
+						Login: Login,
+						IdUser: dbUser.IdUser,
+						message: 'Zalogowano!',
+						Token: JWTToken
+					});
+			}
+			else
+			{
+				console.log("Niepoprawne hasło!");
+				res.status(401).send({message: "Niepoprawne hasło!"});
+			}
 		}
 		else
 		{
-			res.end("NIE zalogowano!");
-			console.log("NIE zalogowano!");
+			console.log("Unauthorised: Użytkownik nie istnieje!");
+			res.status(401).send({message: "Unauthorised: Użytkownik nie istnieje!"});
 		}
+
 	});
 
 	db.close();
@@ -92,7 +156,10 @@ app.get('/books', (req, res) =>
 	{
 		if (err)
 		{
-			throw err;
+			//throw err;
+			res.status(500).send({
+				message: err.message
+			});
 		}
 		rows.forEach(row =>
 		{

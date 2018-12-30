@@ -15,6 +15,15 @@ import Main from './components/Main/Main';
 import BookItem from './components/Main/BookItem';
 import BookItems from './components/Main/BookItems';
 import BookDetails from './components/Main/BookDetails';
+import UserPanel from './components/Header/UserPanel';
+import { getCookie } from './Helpers';
+
+function RenderUserPanel() {
+	if (getCookie("Token"))
+		return <UserPanel />;
+	else
+		return <GuestPanel />;
+}
 
 class App extends Component
 {
@@ -71,8 +80,10 @@ class App extends Component
 							<h1 className="logo">
 								<Link to="/">Ebookator</Link>
 							</h1>
-
-							<GuestPanel />
+							<Switch>
+								<Route	path="/" component={RenderUserPanel} />
+							</Switch>
+							{/* <RenderUserPanel /> */}
 						</div>
 					</header>
 

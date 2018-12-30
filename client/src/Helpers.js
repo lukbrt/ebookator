@@ -24,8 +24,8 @@ export async function sendData(url, data, callback)
         },
         body: JSON.stringify(data)
     });
-        // .then(callback);
-        // .catch((error) => console.log(error));
+    // .then(callback);
+    // .catch((error) => console.log(error));
 }
 
 export async function sendPost(url, data)
@@ -38,6 +38,19 @@ export async function sendPost(url, data)
         body: JSON.stringify(data),
     });
     const body = await response.json();
-    
+
     return body;
 };
+
+export function getCookie(name)
+{
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length === 2)
+        return parts.pop().split(";").shift();
+}
+
+export function deleteCookie(name)
+{
+    document.cookie = name + '=; Max-Age=-99999999;';
+}
