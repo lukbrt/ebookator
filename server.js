@@ -22,30 +22,6 @@ app.post('/register', (req, res) =>
 
 	console.log(req.body);
 
-<<<<<<< HEAD
-	bcrypt.hash(Password, 10, function(err, hash){
-		if(err) {
-			db.close();
-		   return res.status(500).send({
-			message: err.message
-		   });
-		}
-		else {
-			let query = `INSERT INTO User(Login, Password, Email, Salt, Firstname, Surname) 
-			VALUES(?, ?, ?, ?, ?, ?)`;
-		
-			db.run(query, [Login, hash, Email, Salt, Firstname, Surname], function (err)
-			{
-				if (err)
-				{
-					db.close();
-					
-					return res.status(500).send({ message: err.message });
-				}
-		
-				res.send({message: "Zarejestrowano pomyślnie."});
-			});
-=======
 	const salt = bcrypt.genSaltSync(10);
 	const hash = bcrypt.hashSync(Password, salt);
 	
@@ -58,7 +34,6 @@ app.post('/register', (req, res) =>
 		{
 			res.status(500).send({ message: err.message });
 			return console.log(err.message);
->>>>>>> authorize-user
 		}
 	});
 
