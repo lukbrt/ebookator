@@ -36,6 +36,9 @@ const Author = ({ IdAuthor, Firstname, Surname, Origin }) => (
         <td>{Surname}</td>
         <td>{Origin}</td>
         <td>
+            <button className=""><Link to={`/editAuthor/${IdAuthor}`}>Edytuj</Link></button>
+        </td>
+        <td>
             <button onClick={() => removeAuthor(IdAuthor)}>X</button>
         </td>
     </tr>
@@ -145,6 +148,7 @@ class AddAuthor extends Component
                             <th>Imiona</th>
                             <th>Nazwisko</th>
                             <th>Pochodzenie</th>
+                            <th>Edytuj</th>
                             <th>Usuń</th>
                         </tr>
                     </thead>    

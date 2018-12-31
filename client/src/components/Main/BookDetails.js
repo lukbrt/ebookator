@@ -1,18 +1,46 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import styled from 'styled-components'
 import '../../App.scss';
 import { callApi, getCookie, sendDelete, sendPost } from '../../Helpers';
 import { Link } from 'react-router-dom';
+import ReadButton from './ReadButton';
 
 const StyledItem = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding: 10px 2.5%;
+    padding: 15px 2.5%;
     margin: 10px;
     width: fit-content;
 `;
+
+const readBook = async (id) => {
+//     callApi(`book/download/${id}`)
+//     .then(res => {
+//         console.log(res);
+//         // window.location.reload();
+// });
+
+
+//     const response = await fetch(`/book/download/${id}`);
+//     console.log(response);
+
+//     //Create a Blob from the PDF Stream
+//     const file = new Blob(
+//         [response.data], 
+//         {type: 'application/pdf'});
+//   //Build a URL from the file
+//       const fileURL = URL.createObjectURL(file);
+//   //Open the URL on new Window
+//       window.open(fileURL);
+    fetch(`/book/download/${id}`).then((response) => {
+        response.blob().then(function(myBlob) {
+          const fileURL = URL.createObjectURL(myBlob);
+          window.open(fileURL);
+        });
+    });
+}
 
 const removeBook = (id) => {
         sendDelete(`/book/delete/${id}`)
@@ -21,13 +49,20 @@ const removeBook = (id) => {
     });
 }
 
+const returnBook = (IdUser, IdBook) => {
+    sendDelete(`/user/${IdUser}/book/${IdBook}`)
+    .then(res => {
+        window.location.reload();
+});
+}
+
 const hireBook = (IdUser, IdBook) => {
     // const IdUser = ids[0],
     //     IdBook = ids[1];
     sendPost(`/user/${IdUser}/book/${IdBook}`)
     .then(res => {
         window.location.reload();
-});
+    });
 }
 
 const CrudBook = ({ Authorized, IdBook, IdUser, Hired }) => {
@@ -60,14 +95,15 @@ const HiredButton = ({ Hired, ids }) => {
             <div style={{display: "inline-block"}}>
                 <button
                     className="btn-red"
-                    // onClick={() => returnBook(ids[0], ids[1])} TODO
+                    onClick={() => returnBook(ids[0], ids[1])}
                 >
                     Zwróć
                 </button>
 
+                {/* <ReadButton IdBook={ ids[0] } /> */}
                 <button
                     className="btn-blue"
-                    // onClick={() => returnBook(ids[0], ids[1])} TODO
+                    onClick={() => readBook(ids[0])}
                 >
                     Czytaj
                 </button>
@@ -159,46 +195,48 @@ class BookDetails extends Component
                     </div>
                 </div>
 
-                <img src={Thumbnail} alt={Title} className="thumbnail details-img" />
-                <div className="txt-light">
-                    <h1 style={{textAlign: "center"}}>{Title}</h1>
-                    <p className="txt-light">{Description}</p>
+                <div className="detailsBox">
+                    <img src={Thumbnail} alt={Title} className="thumbnail details-img" />
+                    <div className="txt-light">
+                        <h1 style={{textAlign: "center"}}>{Title}</h1>
+                        <p className="txt-light">{Description}</p>
 
-                    <table style={{fontSize: "1.4em"}}>
-                        <tbody>
-                            <tr>
-                                <th>Język</th>
-                                <td>{Language}</td>
-                            </tr>
-                            <tr>
-                                <th>Liczba stron</th>
-                                <td>{Pages}</td>
-                            </tr>
-                            <tr>
-                                <th>Gatunek</th>
-                                <td>{Genre}</td>
-                            </tr>                            
-                            <tr>
-                                <th>W kolorze</th>
-                                <td>{IsColorful ? 'tak' : 'nie'}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                        <table className="table-align-left" style={{fontSize: "1.4em"}}>
+                            <tbody>
+                                <tr>
+                                    <th>Język</th>
+                                    <td>{Language}</td>
+                                </tr>
+                                <tr>
+                                    <th>Liczba stron</th>
+                                    <td>{Pages}</td>
+                                </tr>
+                                <tr>
+                                    <th>Gatunek</th>
+                                    <td>{Genre}</td>
+                                </tr>                            
+                                <tr>
+                                    <th>W kolorze</th>
+                                    <td>{IsColorful ? 'tak' : 'nie'}</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                    <hr />
-                    <h2>O autorze:</h2>
-                    <table style={{fontSize: "1.4em"}}>
-                        <tbody>
-                            <tr>
-                                <th>Autor</th>
-                                <td>{Author.Firstname} {Author.Surname}</td>
-                            </tr>
-                            <tr>
-                                <th>Pochodzenie</th>
-                                <td>{Author.Origin}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                        <hr />
+                        <h2>O autorze:</h2>
+                        <table className="table-align-left" style={{fontSize: "1.4em"}}>
+                            <tbody>
+                                <tr>
+                                    <th>Autor</th>
+                                    <td>{Author.Firstname} {Author.Surname}</td>
+                                </tr>
+                                <tr>
+                                    <th>Pochodzenie</th>
+                                    <td>{Author.Origin}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </StyledItem>
         );

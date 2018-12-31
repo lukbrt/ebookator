@@ -18,6 +18,8 @@ import AddGenre from './components/Add/AddGenre';
 import AddAuthor from './components/Add/AddAuthor';
 import AddBook from './components/Add/AddBook';
 import EditBook from './components/Add/EditBook';
+import ViewerPdf from './components/Main/ViewerPdf';
+import EditAuthor from './components/Add/EditAuthor';
 
 function RenderUserPanel() {
 	if (getCookie("Token"))
@@ -103,6 +105,9 @@ class App extends Component
 							<Route path="/author/add" component={AddAuthor} />
 							<Route exact path="/bookAdd" component={AddBook} />
 							<Route exact path="/edit/book/:id" component={EditBook} />
+							<Route exact path="/editAuthor/:id" component={EditAuthor} />
+							
+							<Route path="/readBook/:id" component={ViewerPdf} />
 						</Switch>
 					</div>
 

@@ -6,8 +6,20 @@ const bcrypt = require('bcryptjs');
 const User = require('./model/User');
 const jwt = require('jsonwebtoken');
 
-var multer  = require('multer')
-var upload = multer({ dest: 'docs/' })
+const multer  = require('multer')
+// const upload = multer({ dest: 'docs/' })
+const path = require('path')
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+	  cb(null, 'docs/')
+	},
+	filename: function (req, file, cb) {
+	  cb(null, file.originalname) //Appending extension   Date.now() + path.extname(file.originalname)
+	}
+  })
+  
+const upload = multer({ storage: storage });
+const fs = require('fs');
 
 const sqlite3 = require('sqlite3').verbose();
 let db;
@@ -158,6 +170,41 @@ app.get('/books', (req, res) =>
 	// res.send(books);
 });
 
+app.get('/book/download/:IdBook', (req, res) =>
+{
+	// const { IdBook, IdUser, Token } = req.body;
+	const { IdBook } = req.params;
+
+	connectDb();
+	let books = [];
+	let query = `SELECT * FROM Ebook
+              WHERE IdBook = ?;`;
+
+	db.get(query, [IdBook], (err, row) => //IdUser, 
+	{
+		if (err)
+		{
+			return console.error(err.message);
+		}
+
+		if (row)
+		{
+			const docJSON = JSON.parse(row.File);
+			const path = docJSON.path;
+			console.log(path);
+			var data =fs.readFileSync(path);
+			res.contentType("application/pdf");
+			res.send(data);
+		}
+		else
+		{
+			res.status(500).send({ status: "Plik jest niedostępny bądź nie istnieje" })
+		}
+	});
+
+	db.close();
+});
+
 // app.post('/book/add', (req, res) =>
 // {
 // 	console.log(req.body);
@@ -295,7 +342,7 @@ app.post('/user/:IdUser/book/:IdBook', (req, res) =>
 	db.close();
 });
 
-//TODO
+//hire book
 app.get('/user/:IdUser/book/:IdBook', (req, res) =>
 {
 	const { IdBook, IdUser } = req.params;
@@ -318,6 +365,37 @@ app.get('/user/:IdUser/book/:IdBook', (req, res) =>
 
 		return row
 			? res.send(row) : res.status(401).send({ Hired: false });
+	});
+
+	db.close();
+});
+
+
+//remove hire
+app.delete('/user/:IdUser/book/:IdBook', (req, res) =>
+{
+	const { IdBook, IdUser } = req.params;
+
+	connectDb();
+
+	if (!IdBook || !IdUser)
+		return res.status(500).send({status: "Nie istnieje!"});
+
+	let query = `DELETE FROM Hire
+		WHERE User_IdUser = ? AND Ebook_IdBook = ?;`;
+
+	db.run(query, [IdBook, IdUser], (err) =>
+	{
+		if (err)
+		{
+			res.status(500).send({status: err.message, Hired: 0});
+			return console.error(err.message);
+		}
+
+		res.status(200).send({
+			status: "Deleted",
+			Hired: 0
+		});
 	});
 
 	db.close();
@@ -427,6 +505,37 @@ app.post('/author/add', (req, res) =>
 	db.close();
 });
 
+app.post('/author/update/:id', (req, res) =>
+{
+	console.log(req.body);
+	connectDb();
+	const { id } = req.params;
+	const { Firstname, Surname, Origin } = req.body;
+	validateString("Firstname",Firstname, res);
+	validateString("Surname",Surname, res);
+	validateString("Origin",Origin, res);
+
+	let query = `
+		UPDATE Author
+		SET Firstname = ?,
+			Surname = ?,
+			Origin = ?
+		WHERE IdAuthor = ?;
+	`;
+
+	db.run(query, [Firstname, Surname, Origin, id], function (err)
+	{
+		if (err)
+		{
+			res.status(500).send({ status: err.message });
+			return console.log(err.message);
+		}
+		res.status(200).send({status: "Edytowano pomyślnie"});
+	});
+
+	db.close();
+});
+
 app.delete('/author/delete/:id', (req, res) =>
 {
 	connectDb();
@@ -463,6 +572,24 @@ app.delete('/book/delete/:id', (req, res) =>
 	console.log(req.params);
 	if (!id)
 		return res.status(500).send({status: "Nie istnieje!"});
+
+		//-------------
+	let queryDelete = `DELETE FROM Hire
+		WHERE Ebook_IdBook = ?;`;
+
+	db.run(queryDelete, [id], (err) =>
+	{
+		if (err)
+		{
+			console.error(err.message);
+		}
+
+		// res.status(200).send({
+		// 	status: "Deleted",
+		// 	Hired: 0
+		// });
+	});
+		//-------------
 
 	let query = `DELETE FROM Ebook
     	WHERE IdBook = ?;`;

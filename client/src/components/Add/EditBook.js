@@ -79,6 +79,7 @@ class EditBook extends Component
     handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.target);
+        
         // const { Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre } = this.state;
         // console.log(this.state);
         // sendPost('/book/add', { Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre })
