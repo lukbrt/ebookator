@@ -6,12 +6,15 @@ const bcrypt = require('bcryptjs');
 const User = require('./model/User');
 const jwt = require('jsonwebtoken');
 
+var multer  = require('multer')
+var upload = multer({ dest: 'docs/' })
+
 const sqlite3 = require('sqlite3').verbose();
 let db;
 connectDb = () => { db = new sqlite3.Database('./db/database.db') };
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.post('/register', (req, res) =>
@@ -35,6 +38,7 @@ app.post('/register', (req, res) =>
 			res.status(500).send({ message: err.message });
 			return console.log(err.message);
 		}
+		res.status(200).send({ message: "Zarejestrowano pomyślnie." });
 	});
 
 	db.close();
@@ -142,7 +146,8 @@ app.get('/books', (req, res) =>
 				Title: row.Title,
 				IdBook: row.IdBook,
 				Path: row.Path,
-				Thumbnail: row.Thumbnail
+				Thumbnail: row.Thumbnail,
+				Genre_IdGenre: row.Genre_IdGenre
 			})
 		});
 		res.send(books);
@@ -153,7 +158,172 @@ app.get('/books', (req, res) =>
 	// res.send(books);
 });
 
-app.get('/cats', (req, res) =>
+// app.post('/book/add', (req, res) =>
+// {
+// 	console.log(req.body);
+// 	connectDb();
+// 	const { Title, Language, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre } = req.body;
+// 	let { Pages, IsColorful } = req.body;
+// 	const bookFile = req.body.File;
+
+// 	validateString("Title",Title, res);
+// 	validateString("Language",Language, res);
+// 	validateString("Path",Path, res);
+// 	validateString("Description",Description, res);
+// 	IsColorful = (IsColorful) ? 1 : 0;
+// 	Pages = !isNaN(Pages) && Pages >= 0 ? Number.parseInt(Pages) : 0;
+// console.log(Pages);
+
+// 	let query = `INSERT INTO Ebook(Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre, File)
+// 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+
+// 	db.run(query, [Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre, bookFile], function (err)
+// 	{
+// 		if (err)
+// 		{
+// 			db.close();
+// 			res.status(500).send({ status: err.message });
+// 			return console.log(err.message);
+// 		}
+// 		res.status(200).send({status: "Dodano pomyślnie"});
+// 	});
+
+// 	db.close();
+// });
+
+app.post('/book/add', upload.single('File'), (req, res, next) =>
+{
+	console.log(req.body);
+	connectDb();
+	const { Title, Language, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre } = req.body;
+	let { Pages, IsColorful } = req.body;
+	const bookFile = JSON.stringify(req.file);
+	console.log(bookFile);
+	validateString("Title",Title, res);
+	validateString("Language",Language, res);
+	validateString("Path",Path, res);
+	validateString("Description",Description, res);
+	IsColorful = (IsColorful) ? 1 : 0;
+	Pages = !isNaN(Pages) && Pages >= 0 ? Number.parseInt(Pages) : 0;
+
+	let query = `INSERT INTO Ebook(Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre, File)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+
+	db.run(query, [Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre, bookFile], function (err)
+	{
+		if (err)
+		{
+			res.status(500).send({ status: err.message });
+			return console.log(err.message);
+		}
+		res.status(200).send({status: "Dodano pomyślnie"});
+	});
+
+	db.close();
+});
+
+app.post('/book/update/:id', upload.single('File'), (req, res, next) =>
+{
+	console.log(req.body);
+	connectDb();
+	const { id } = req.params;
+	const { Title, Language, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre } = req.body;
+	let { Pages, IsColorful } = req.body;
+	const bookFile = JSON.stringify(req.file);
+	console.log(bookFile);
+	validateString("Title",Title, res);
+	validateString("Language",Language, res);
+	validateString("Path",Path, res);
+	validateString("Description",Description, res);
+	IsColorful = (IsColorful) ? 1 : 0;
+	Pages = !isNaN(Pages) && Pages >= 0 ? Number.parseInt(Pages) : 0;
+
+	let query = `
+		UPDATE Ebook
+		SET Title = ?,
+			Language = ?,
+			Pages = ?, 
+			IsColorful = ?, 
+			Author_IdAuthor = ?, 
+			Path = ?, 
+			Description = ?, 
+			Thumbnail = ?, 
+			Genre_IdGenre = ?, 
+			File = ?
+		WHERE IdBook = ?;
+	`;
+
+	db.run(query, [Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre, bookFile, id], function (err)
+	{
+		if (err)
+		{
+			res.status(500).send({ status: err.message });
+			return console.log(err.message);
+		}
+		res.status(200).send({status: "Edytowano pomyślnie"});
+	});
+
+	db.close();
+});
+
+
+app.post('/user/:IdUser/book/:IdBook', (req, res) =>
+{
+	const { IdBook, IdUser } = req.params;
+
+	connectDb();
+	let HireDate = new Date();
+	let ExpireDate = HireDate.addDays(2);
+	HireDate = printDate(HireDate);
+	ExpireDate = printDate(ExpireDate);
+	console.log(HireDate);
+	console.log(ExpireDate);
+
+	let query = `INSERT INTO Hire(User_IdUser, Ebook_IdBook, HireDate, ExpireDate)
+		VALUES (?, ?, ?, ?);`;
+
+	db.run(query, [IdBook, IdUser, HireDate, ExpireDate], function (err)
+	{
+		if (err)
+		{
+			res.status(500).send({ status: err.message });
+			return console.log(err.message);
+		}
+		res.status(200).send({status: "Dodano pomyślnie"});
+	});
+
+	db.close();
+});
+
+//TODO
+app.get('/user/:IdUser/book/:IdBook', (req, res) =>
+{
+	const { IdBook, IdUser } = req.params;
+
+	connectDb();
+
+	let query = `SELECT * FROM Hire
+    	WHERE User_IdUser = ? AND Ebook_IdBook = ?;`;
+
+	db.get(query, [IdUser, IdBook], (err, row) =>
+	{	console.log("hires:" + row);
+		if (err)
+		{
+			return console.error(err.message);
+		}
+
+		if (row) {
+			row.Hired = true;
+		}
+
+		return row
+			? res.send(row) : res.status(401).send({ Hired: false });
+	});
+
+	db.close();
+});
+
+app.get('/genres', (req, res) =>
 {
 	connectDb();
 	let query = `SELECT * FROM Genre;`;
@@ -166,6 +336,24 @@ app.get('/cats', (req, res) =>
 		}
 
 		res.send(genres);
+	});
+
+	db.close();
+});
+
+app.get('/authors', (req, res) =>
+{
+	connectDb();
+	let query = `SELECT * FROM Author;`;
+
+	db.all(query, [], (err, author) =>
+	{
+		if (err)
+		{
+			throw err;
+		}
+
+		res.send(author);
 	});
 
 	db.close();
@@ -213,6 +401,162 @@ app.get('/author/:id', (req, res) =>
 	db.close();
 });
 
+app.post('/author/add', (req, res) =>
+{
+	connectDb();
+	const { Firstname, Surname, Origin } = req.body;
+	console.log(req.body);
+
+	validateString("Firstname", Firstname, res);
+	validateString("Surname", Surname, res);
+	validateString("Origin", Origin, res);
+
+	let query = `INSERT INTO Author(Firstname, Surname, Origin)
+		VALUES (?, ?, ?);`;
+
+	db.run(query, [Firstname, Surname, Origin], function (err)
+	{
+		if (err)
+		{
+			res.status(500).send({ message: err.message });
+			return console.log(err.message);
+		}
+		res.status(200).send({status: "Dodano pomyślnie"});
+	});
+
+	db.close();
+});
+
+app.delete('/author/delete/:id', (req, res) =>
+{
+	connectDb();
+	
+	const { id } = req.params;
+	console.log(id);
+	console.log(req.params);
+	if (!id)
+		return res.status(500).send({status: "Nie istnieje!"});
+
+	let query = `DELETE FROM Author
+    	WHERE IdAuthor = ?;`;
+
+	db.run(query, [id], (err) =>
+	{
+		if (err)
+		{
+			res.status(500).send({status: err.message});
+			return console.error(err.message);
+		}
+
+		res.status(200).send({status: "Deleted"});
+	});
+
+	db.close();
+});
+
+app.delete('/book/delete/:id', (req, res) =>
+{
+	connectDb();
+	
+	const { id } = req.params;
+	console.log(id);
+	console.log(req.params);
+	if (!id)
+		return res.status(500).send({status: "Nie istnieje!"});
+
+	let query = `DELETE FROM Ebook
+    	WHERE IdBook = ?;`;
+
+	db.run(query, [id], (err) =>
+	{
+		if (err)
+		{
+			res.status(500).send({status: err.message});
+			return console.error(err.message);
+		}
+
+		res.status(200).send({status: "Deleted"});
+	});
+
+	db.close();
+});
+
+
+app.get('/genre/:id', (req, res) =>
+{
+	connectDb();
+	const { id } = req.params;
+
+	let query = `SELECT * FROM Genre
+    	WHERE IdGenre = ?;`;
+
+	db.all(query, [id], (err, genres) =>
+	{
+		if (err)
+		{
+			return console.error(err.message);
+		}
+
+		res.send(genres[0]);
+	});
+
+	db.close();
+});
+
+app.post('/genre/add', (req, res) =>
+{
+	connectDb();
+	const { Name } = req.body;
+	console.log(req.body);
+	console.log(Name);
+	if (!Name || Name.length < 2)
+	{
+		return res.status(500).send({ message: "Nazwa jest za krótka!" });
+	}
+
+	let query = `INSERT INTO Genre(Name)
+		VALUES (?);`;
+
+	db.run(query, [Name], function (err)
+	{
+		if (err)
+		{
+			res.status(500).send({ message: err.message });
+			return console.log(err.message);
+		}
+		res.status(200).send({status: "Dodano pomyślnie"});
+	});
+
+	db.close();
+});
+
+app.delete('/genre/delete/:id', (req, res) =>
+{
+	connectDb();
+	
+	const { id } = req.params;
+	console.log(id);
+	console.log(req.params);
+	if (!id)
+		return res.status(500).send({status: "Nie istnieje!"});
+
+	let query = `DELETE FROM Genre
+    	WHERE IdGenre = ?;`;
+
+	db.run(query, [id], (err) =>
+	{
+		if (err)
+		{
+			res.status(500).send({status: err.message});
+			return console.error(err.message);
+		}
+
+		res.status(200).send({status: "Deleted"});
+	});
+
+	db.close();
+});
+
 
 app.post('/api/world', (req, res) =>
 {
@@ -221,5 +565,38 @@ app.post('/api/world', (req, res) =>
 		`I received your POST request. This is what you sent me: ${req.body.post}`,
 	);
 });
+
+function validateString(attrName, attr, res) 
+{
+	if (!attr || attr.length < 2)
+	{
+		res.status(500).send({ message: `${attrName} niepoprawny!` });
+		return console.error(`${attrName} niepoprawny!`);
+	}
+}
+
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+	return date;
+}
+
+function printDate(date) {
+	var dd = date.getDate();
+
+	var mm = date.getMonth()+1; 
+	var yyyy = date.getFullYear();
+	if(dd<10) 
+	{
+		dd='0'+dd;
+	} 
+
+	if(mm<10) 
+	{
+		mm='0'+mm;
+	} 
+
+	return date = dd+'-'+mm+'-'+yyyy;
+}
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

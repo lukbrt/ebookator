@@ -42,6 +42,38 @@ export async function sendPost(url, data)
     return body;
 };
 
+export async function sendFormData(url, data)
+{
+    const response = await fetch(url, {
+        method: 'POST',
+        body: data,
+    });
+    const body = await response.json();
+
+    return body;
+};
+
+// export async function sendDelete(url)
+// {
+//     const response = await fetch(url, {
+//         method: 'DELETE',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(data),
+//     });
+//     const body = await response.json();
+
+//     return body;
+// };
+
+export function sendDelete(url) {
+    return fetch(url, {
+      method: 'delete'
+    })
+    .then(response => response.json());
+}
+
 export function getCookie(name)
 {
     var value = "; " + document.cookie;

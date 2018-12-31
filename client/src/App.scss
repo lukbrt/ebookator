@@ -8,6 +8,7 @@ html, body {
 a {
     text-decoration: none;
     color: $green;
+    transition: color .5s;
 }
 
 a:hover {
@@ -107,7 +108,7 @@ form {
     }
 }
 
-button, input
+button, input, textarea, select
 {
     padding: .5em 1em;
     margin: .4em .8em;
@@ -117,7 +118,7 @@ button, input
     font-size: 1.1rem;
 }
 
-button, input, label {
+button, input, label, select {
     font-weight: bold;
 }
 
@@ -142,6 +143,18 @@ button:hover
 .btn-orange {
     color: $orange;
     border-color: $orange;
+}
+
+.btn-red {
+    $red: crimson;
+    color: $red;
+    border-color: $red;
+}
+
+.btn-blue {
+    $cyan: darkcyan;
+    color: $cyan;
+    border-color: $cyan;
 }
 
 .green-btn
@@ -206,4 +219,32 @@ p {
     & img:hover {
         transform: rotate(360deg);
     }
+}
+
+table.bordered-table {
+    font-size: 1.4em;
+    border-collapse: collapse;
+
+    td {
+        text-align: left;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    thead {
+        background-color: #d4d4d4;
+    }
+
+    th {
+        border-bottom: 2px solid $dark;
+        padding: 5px 3px;
+    }
+}
+
+.detailsCrud {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 100%;
 }

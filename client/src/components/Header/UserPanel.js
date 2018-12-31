@@ -41,7 +41,7 @@ class UserPanel extends Component
                     marginRight: "10px"
                 }}
                 >
-                    <Link to="/book/add">Dodaj książkę</Link>
+                    <Link to="/bookAdd">Dodaj książkę</Link>
                     <Link to="/genre/add">Dodaj gatunek</Link>
                     <Link to="/author/add">Dodaj autora</Link>
                 </div>

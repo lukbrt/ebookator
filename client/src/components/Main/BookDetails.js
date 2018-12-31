@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components'
 import '../../App.scss';
-import { callApi } from '../../Helpers';
+import { callApi, getCookie, sendDelete, sendPost } from '../../Helpers';
 import { Link } from 'react-router-dom';
 
 const StyledItem = styled.div`
@@ -14,6 +14,79 @@ const StyledItem = styled.div`
     width: fit-content;
 `;
 
+const removeBook = (id) => {
+        sendDelete(`/book/delete/${id}`)
+        .then(res => {
+            // window.location.reload();
+    });
+}
+
+const hireBook = (IdUser, IdBook) => {
+    // const IdUser = ids[0],
+    //     IdBook = ids[1];
+    sendPost(`/user/${IdUser}/book/${IdBook}`)
+    .then(res => {
+        window.location.reload();
+});
+}
+
+const CrudBook = ({ Authorized, IdBook, IdUser, Hired }) => {
+    if (Authorized)
+    {
+        const ids = [IdBook, IdUser];
+        return (
+            <div>
+                <button 
+                    className="btn-light"
+                    value={ IdBook }
+                    onClick={() => removeBook(IdBook)}
+                >
+                    <Link to="/">Usuń</Link>
+                </button>
+                <button className="btn-light"><Link to={`/edit/book/${IdBook}`}>Edytuj</Link></button>
+                <HiredButton Hired={Hired} ids={ids} />
+            </div>
+        )
+    }
+    else
+    {
+        return <div></div>;
+    }
+}
+
+const HiredButton = ({ Hired, ids }) => {
+    if (Hired)
+        return (
+            <div style={{display: "inline-block"}}>
+                <button
+                    className="btn-red"
+                    // onClick={() => returnBook(ids[0], ids[1])} TODO
+                >
+                    Zwróć
+                </button>
+
+                <button
+                    className="btn-blue"
+                    // onClick={() => returnBook(ids[0], ids[1])} TODO
+                >
+                    Czytaj
+                </button>
+            </div>
+        )
+    else 
+    {
+        return (
+            <button 
+                value={ ids } 
+                className="btn-orange"
+                onClick={() => hireBook(ids[0], ids[1])}
+            >
+                Wypożycz
+            </button>
+        )
+    }
+}
+
 class BookDetails extends Component 
 {
     state = {
@@ -24,34 +97,66 @@ class BookDetails extends Component
         Pages: 0,
         IsColorful: false,
         Language: 'PL',
+        Genre_IdGenre: '',
+        Genre: 'unknown',
         Author_IdAuthor: 0,
-        Author: {}
+        Author: {},
+        Authorized: false,
+        IdUser: 0,
+        Hired: false
     }
 
     componentDidMount()
     {
         const { id } = this.props.match.params;
+        // this.setState({ IdBook: id });
+
+        if (getCookie("Token"))
+            this.state.Authorized = true;
+
+        const IdUser = getCookie("IdUser");
+        if(IdUser){
+            this.setState({ IdUser });
+        }
 
         callApi(`book/${id}`)
             .then(res => this.setState({ ...res }))
             .then(() => {
                 callApi(`author/${this.state.Author_IdAuthor}`)
                     .then(res => this.setState({ Author: res }))
+                    .then(() => {
+                        callApi(`genre/${this.state.Genre_IdGenre}`)
+                            .then(res => this.setState({ Genre: res.Name }))
+                            .catch(err => console.log(err));
+                    })
                     .catch(err => console.log(err));
             })
             .catch(err => console.log(err));
+
+            callApi(`user/${getCookie("IdUser")}/book/${id}`)
+                .then(res => this.setState({ Hired: res.Hired }))
+                .catch(err => console.log(err));
     }
 
     render()
     {
-        const { Title, Thumbnail, Description, Pages, IsColorful, Language, Author } = this.state;
+        const { IdBook, Title, Thumbnail, Description, Pages, IsColorful, Language, Author, Genre_IdGenre, Genre, Authorized, IdUser, Hired } = this.state;
 
         return (
             <StyledItem className="box">
-                <div className="close">
-                    <Link to="/">
-                        <img src="https://img.icons8.com/nolan/64/000000/delete-sign.png" alt="close" />
-                    </Link>
+
+                <div className="detailsCrud">
+                    <CrudBook 
+                        Authorized={Authorized} 
+                        IdBook={IdBook} 
+                        IdUser={IdUser}
+                        Hired={Hired}
+                    />
+                    <div className="close">
+                        <Link to="/">
+                            <img src="https://img.icons8.com/nolan/64/000000/delete-sign.png" alt="close" />
+                        </Link>
+                    </div>
                 </div>
 
                 <img src={Thumbnail} alt={Title} className="thumbnail details-img" />
@@ -70,13 +175,16 @@ class BookDetails extends Component
                                 <td>{Pages}</td>
                             </tr>
                             <tr>
+                                <th>Gatunek</th>
+                                <td>{Genre}</td>
+                            </tr>                            
+                            <tr>
                                 <th>W kolorze</th>
                                 <td>{IsColorful ? 'tak' : 'nie'}</td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <button className="btn-orange">Wypożycz</button>
                     <hr />
                     <h2>O autorze:</h2>
                     <table style={{fontSize: "1.4em"}}>
