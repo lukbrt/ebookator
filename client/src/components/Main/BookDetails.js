@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import '../../App.scss';
 import { callApi, getCookie, sendDelete, sendPost } from '../../Helpers';
 import { Link } from 'react-router-dom';
-import ReadButton from './ReadButton';
 
 const StyledItem = styled.div`
     display: flex;
@@ -34,12 +33,15 @@ const readBook = async (id) => {
 //       const fileURL = URL.createObjectURL(file);
 //   //Open the URL on new Window
 //       window.open(fileURL);
-    fetch(`/book/download/${id}`).then((response) => {
-        response.blob().then(function(myBlob) {
-          const fileURL = URL.createObjectURL(myBlob);
-          window.open(fileURL);
+    if (getCookie("Token"))
+    {
+        fetch(`/book/download/${id}`).then((response) => {
+            response.blob().then(function(myBlob) {
+              const fileURL = URL.createObjectURL(myBlob);
+              window.open(fileURL);
+            });
         });
-    });
+    }
 }
 
 const removeBook = (id) => {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import '../App.scss';
 import { Link } from 'react-router-dom';
-import { sendData, sendPost } from '../Helpers';
+import { sendPost } from '../Helpers';
 // import { Formik } from 'formik';
 
 const styles = {
@@ -33,30 +33,6 @@ class Register extends Component
 
         sendPost('/register', this.state)
             .then(res => this.setState({ status: res.message }));
-
-        // sendData('/register', this.state, (res) => {
-        //     this.setState({ status: res.message });
-        //     // this.forceUpdate();
-        //     // try 
-        //     // {
-        //     //     console.log(res);
-        //     //     // for (let pole in res)
-        //     //     //     console.log(`${pole}: ${res[pole]}`);
-        //     //     if (res.status === 200)
-        //     //     {
-        //     //         this.setState({status: res});
-        //     //     }
-        //     //     else
-        //     //     {
-        //     //         this.setState({status: res});
-        //     //     }
-        //     // }
-        //     // catch (error) 
-        //     // {
-        //     //     console.log(error);
-        //     //     this.setState({status: res});
-        //     // }
-        // });
     }
 
     render()

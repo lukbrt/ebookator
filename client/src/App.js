@@ -107,7 +107,7 @@ class App extends Component
 							<Route exact path="/edit/book/:id" component={EditBook} />
 							<Route exact path="/editAuthor/:id" component={EditAuthor} />
 							
-							<Route path="/readBook/:id" component={ViewerPdf} />
+							{/* <Route path="/readBook/:id" component={ViewerPdf} /> */}
 						</Switch>
 					</div>
 

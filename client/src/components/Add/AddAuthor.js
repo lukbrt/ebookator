@@ -5,16 +5,6 @@ import { callApi, sendPost, sendDelete, getCookie } from '../../Helpers';
 import { Link, Redirect } from 'react-router-dom';
 import { Stmt } from '../Stmt';
 
-const StyledItem = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 10px 2.5%;
-    margin: 10px;
-    width: fit-content;
-`;
-
 const styles = {
     display: "flex",
     justifyContent: "center",

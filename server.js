@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 5000;
 const bcrypt = require('bcryptjs');
-const User = require('./model/User');
+// const User = require('./model/User');
 const jwt = require('jsonwebtoken');
 
 const multer  = require('multer')
@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 	  cb(null, 'docs/')
 	},
 	filename: function (req, file, cb) {
-	  cb(null, file.originalname) //Appending extension   Date.now() + path.extname(file.originalname)
+	  cb(null, Date.now() + path.extname(file.originalname)) //Appending extension //  file.originalname
 	}
   })
   
@@ -163,16 +163,12 @@ app.get('/books', (req, res) =>
 			})
 		});
 		res.send(books);
-		// books = rows;
 	});
 	db.close();
-
-	// res.send(books);
 });
 
 app.get('/book/download/:IdBook', (req, res) =>
 {
-	// const { IdBook, IdUser, Token } = req.body;
 	const { IdBook } = req.params;
 
 	connectDb();
@@ -204,39 +200,6 @@ app.get('/book/download/:IdBook', (req, res) =>
 
 	db.close();
 });
-
-// app.post('/book/add', (req, res) =>
-// {
-// 	console.log(req.body);
-// 	connectDb();
-// 	const { Title, Language, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre } = req.body;
-// 	let { Pages, IsColorful } = req.body;
-// 	const bookFile = req.body.File;
-
-// 	validateString("Title",Title, res);
-// 	validateString("Language",Language, res);
-// 	validateString("Path",Path, res);
-// 	validateString("Description",Description, res);
-// 	IsColorful = (IsColorful) ? 1 : 0;
-// 	Pages = !isNaN(Pages) && Pages >= 0 ? Number.parseInt(Pages) : 0;
-// console.log(Pages);
-
-// 	let query = `INSERT INTO Ebook(Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre, File)
-// 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
-
-// 	db.run(query, [Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre, bookFile], function (err)
-// 	{
-// 		if (err)
-// 		{
-// 			db.close();
-// 			res.status(500).send({ status: err.message });
-// 			return console.log(err.message);
-// 		}
-// 		res.status(200).send({status: "Dodano pomyślnie"});
-// 	});
-
-// 	db.close();
-// });
 
 app.post('/book/add', upload.single('File'), (req, res, next) =>
 {

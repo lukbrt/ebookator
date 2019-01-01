@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import styled from 'styled-components'
 import '../../App.scss';
-import { callApi, sendPost, sendDelete, getCookie } from '../../Helpers';
+import { callApi, sendPost, getCookie } from '../../Helpers';
 import { Link, Redirect } from 'react-router-dom';
-import { Stmt } from '../Stmt';
 
 const styles = {
     display: "flex",
