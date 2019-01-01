@@ -6,6 +6,8 @@ const bcrypt = require('bcryptjs');
 // const User = require('./model/User');
 const jwt = require('jsonwebtoken');
 
+const Genre = require('./model/Genre');
+
 const multer  = require('multer')
 // const upload = multer({ dest: 'docs/' })
 const path = require('path')
@@ -688,5 +690,31 @@ function printDate(date) {
 
 	return date = dd+'-'+mm+'-'+yyyy;
 }
+
+app.post('/add/genre', (req, res) => {
+	Genre.create({
+		Name: req.body.Name
+	});
+	res.send({status: "OK"});
+});
+
+app.put('/genre/update/:id', (req, res) => {
+	console.log("post");
+	const { Name } = req.body;
+	Genre.update(
+		{ Name:  Name},
+		{ where: { IdGenre: req.params.id } }
+	  )
+		.then(result => {
+			//   handleResult(result)
+			console.log(result);
+			res.send({status: result[0]});
+		}
+		)
+		.catch(err =>
+		//   handleError(err)
+			console.log(err.message)
+		)
+});
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
