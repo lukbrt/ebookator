@@ -14,7 +14,7 @@ const styles = {
 class Register extends Component 
 {
     state = {
-        status: ''
+        status: []
     }
 
     handleInputChange = (event) => {
@@ -32,11 +32,22 @@ class Register extends Component
         console.log(this.state);
 
         sendPost('/register', this.state)
-            .then(res => this.setState({ status: res.message }));
+            .then(res => {
+                const stmts = [];
+                if (Array.isArray(res.message)) {
+                    res.message.forEach(error => stmts.push(error.msg));
+                }
+                else
+                    stmts.push(res.message);
+
+                this.setState({ status: stmts });
+            });
     }
 
     render()
     {
+        const { status } = this.state;
+
         return (
             <div
                 style={styles}
@@ -62,7 +73,7 @@ class Register extends Component
 
                     <div>
                         <label htmlFor="Password">Hasło</label>
-                        <input type="password" name="Password" id="Password" minLength="6" onChange={this.handleInputChange} required />
+                        <input type="password" name="Password" id="Password" minLength="6"  onChange={this.handleInputChange} required />
                     </div>
 
                     <div>
@@ -82,13 +93,17 @@ class Register extends Component
 
                     <button type="submit">Zarejestruj</button>
 
-                    <p 
+                    <ul
                     style={{
                         fontSize: "1.4em", 
                         fontWeight: "bolder",
                         marginBottom: "0",
                         display: `${this.state.status === '' ? "none" : "block"}`
-                    }}>{this.state.status}</p>
+                    }}>
+                        {
+                            status.map(stmt =>  <li>{ stmt }</li>)
+                        }
+                    </ul>
                 </form>
             </div>
         );

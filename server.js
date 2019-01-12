@@ -5,7 +5,7 @@ const port = process.env.PORT || 5000;
 const bcrypt = require('bcryptjs');
 // const User = require('./model/User');
 const jwt = require('jsonwebtoken');
-
+const { check, validationResult } = require('express-validator/check');
 const Genre = require('./model/Genre');
 
 const multer  = require('multer')
@@ -31,8 +31,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-app.post('/register', (req, res) =>
+app.post('/register', [
+		check('Login', 'Login can\'t be empty!').not().isEmpty(),
+		check('Password', 'Hasło musi mieć conajmniej 6 znaków').isLength({ min: 6 }),
+		check('Email', 'Email ma niewłaściwy format!').isEmail()
+	],
+	(req, res) =>
 {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({
+			message: errors.array()
+		});
+	}
+
 	connectDb();
 	const { Login, Password, Email, Firstname, Surname } = req.body;
 	const Salt = 'abc';
