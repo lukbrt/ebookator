@@ -19,17 +19,6 @@ class ReadButton extends Component
         Doc: ''
     }
 
-    componentDidMount()
-    {
-
-    }
-
-    // getDoc = async (id) => {
-    //     const response = await fetch(`/book/download/${id}`);
-    //     console.log(response);
-    //     this.setState({Doc: response});
-    // }
-
     render()
     {
         const { IdBook } = this.props;

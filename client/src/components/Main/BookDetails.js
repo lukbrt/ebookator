@@ -15,24 +15,6 @@ const StyledItem = styled.div`
 `;
 
 const readBook = async (id) => {
-//     callApi(`book/download/${id}`)
-//     .then(res => {
-//         console.log(res);
-//         // window.location.reload();
-// });
-
-
-//     const response = await fetch(`/book/download/${id}`);
-//     console.log(response);
-
-//     //Create a Blob from the PDF Stream
-//     const file = new Blob(
-//         [response.data], 
-//         {type: 'application/pdf'});
-//   //Build a URL from the file
-//       const fileURL = URL.createObjectURL(file);
-//   //Open the URL on new Window
-//       window.open(fileURL);
     if (getCookie("Token"))
     {
         fetch(`/book/download/${id}`).then((response) => {
@@ -46,9 +28,9 @@ const readBook = async (id) => {
 
 const removeBook = (id) => {
         sendDelete(`/book/delete/${id}`)
-        .then(res => {
-            // window.location.reload();
-    });
+        // .then(res => {
+        //     // window.location.reload();
+        // });
 }
 
 const returnBook = (IdUser, IdBook) => {
@@ -59,8 +41,6 @@ const returnBook = (IdUser, IdBook) => {
 }
 
 const hireBook = (IdUser, IdBook) => {
-    // const IdUser = ids[0],
-    //     IdBook = ids[1];
     sendPost(`/user/${IdUser}/book/${IdBook}`)
     .then(res => {
         window.location.reload();
@@ -147,7 +127,6 @@ class BookDetails extends Component
     componentDidMount()
     {
         const { id } = this.props.match.params;
-        // this.setState({ IdBook: id });
 
         if (getCookie("Token"))
             this.state.Authorized = true;

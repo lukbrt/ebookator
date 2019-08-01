@@ -79,14 +79,6 @@ class EditBook extends Component
     handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.target);
-        
-        // const { Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre } = this.state;
-        // console.log(this.state);
-        // sendPost('/book/add', { Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre })
-        //     .then(res => {
-        //         this.setState({ status: res.status });
-        //         // window.location.reload();
-        //     });
 
         sendFormData(`/book/update/${this.state.IdBook}`, data)
         .then(res => {
@@ -102,7 +94,6 @@ class EditBook extends Component
 
     render()
     {
-        // const { IdBook, Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description } = this.state;
         const { authors, genres } = this.state;
         const { Title, Thumbnail, Description, Pages, Path, IsColorful, Language, Genre_IdGenre, Author_IdAuthor, File } = this.state;
         return (

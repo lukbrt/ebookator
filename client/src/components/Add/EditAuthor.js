@@ -54,7 +54,6 @@ class EditAuthor extends Component
             .then(res =>
             {
                 this.setState({ status: res.status });
-                // window.location.reload();
             });
     }
 

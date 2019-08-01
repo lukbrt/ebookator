@@ -30,7 +30,6 @@ const Genre = ({ IdGenre, Name }) => (
 const removeGenre = (id) => {
     sendDelete(`/genre/delete/${id}`)
     .then(res => {
-        // this.setState({ status: res.status });
         window.location.reload();
     });
 }
@@ -103,13 +102,6 @@ class AddGenre extends Component
                         <input type="text" name="Name" id="Name" minLength="3" onChange={this.handleInputChange} required />
                     </div>
                     <button type="submit">Dodaj</button>
-                    {/* <p
-                        style={{
-                            fontSize: "1.4em",
-                            fontWeight: "bolder",
-                            marginBottom: "0",
-                            display: `${this.state.status === '' ? "none" : "block"}`
-                        }}>{this.state.status}</p> */}
 
                     <Stmt status={this.state.status} />
                 </form>
@@ -123,10 +115,6 @@ class AddGenre extends Component
                                 IdGenre={genre.IdGenre} 
                                 Name={genre.Name} 
                             />
-                            // <li key={genre.IdGenre}>
-                            //     {genre.Name}
-                            //     <button onClick={(id) => removeGenre(id)}>X</button>
-                            // </li>
                     )}
                 </ul>
             </div>

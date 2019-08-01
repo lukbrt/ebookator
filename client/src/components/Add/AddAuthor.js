@@ -120,13 +120,6 @@ class AddAuthor extends Component
                         <input type="text" name="Origin" id="Origin" minLength="2" onChange={this.handleInputChange} required />
                     </div>
                     <button type="submit">Dodaj</button>
-                    {/* <p
-                        style={{
-                            fontSize: "1.4em",
-                            fontWeight: "bolder",
-                            marginBottom: "0",
-                            display: `${this.state.status === '' ? "none" : "block"}`
-                        }}>{this.state.status}</p> */}
 
                     <Stmt status={this.state.status} />
                 </form>
@@ -153,10 +146,6 @@ class AddAuthor extends Component
                                     Surname={author.Surname}
                                     Origin={author.Origin}
                                 />
-                                // <li key={genre.IdGenre}>
-                                //     {genre.Name}
-                                //     <button onClick={(id) => removeGenre(id)}>X</button>
-                                // </li>
                         )}
                     </tbody>
                 </table>

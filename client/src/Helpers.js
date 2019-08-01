@@ -9,13 +9,6 @@ export async function callApi(path)
 
 export async function sendData(url, data, callback)
 {
-    // var formData = new FormData();
-
-    // for (var name in data)
-    // {
-    //     formData.append(name, data[name]);
-    // }
-
     fetch(url, {
         method: 'POST',
         headers: {
@@ -24,8 +17,6 @@ export async function sendData(url, data, callback)
         },
         body: JSON.stringify(data)
     });
-    // .then(callback);
-    // .catch((error) => console.log(error));
 }
 
 export async function sendPost(url, data)
@@ -52,20 +43,6 @@ export async function sendFormData(url, data)
 
     return body;
 };
-
-// export async function sendDelete(url)
-// {
-//     const response = await fetch(url, {
-//         method: 'DELETE',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(data),
-//     });
-//     const body = await response.json();
-
-//     return body;
-// };
 
 export function sendDelete(url) {
     return fetch(url, {

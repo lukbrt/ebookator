@@ -19,24 +19,6 @@ const formStyles = {
     border: "none"
 }
 
-// const Book = ({ IdBook, Firstname, Surname, Origin }) => (
-//     <tr>
-//         <td>{Firstname}</td>
-//         <td>{Surname}</td>
-//         <td>{Origin}</td>
-//         <td>
-//             <button onClick={() => removeAuthor(IdBook)}>X</button>
-//         </td>
-//     </tr>
-// );
-
-// const removeAuthor = (id) => {
-//     sendDelete(`/author/delete/${id}`)
-//     .then(res => {
-//         window.location.reload();
-//     });
-// }
-
 class AddBook extends Component 
 {
     state = {
@@ -80,13 +62,6 @@ class AddBook extends Component
     handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.target);
-        // const { Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre } = this.state;
-        // console.log(this.state);
-        // sendPost('/book/add', { Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description, Thumbnail, Genre_IdGenre })
-        //     .then(res => {
-        //         this.setState({ status: res.status });
-        //         // window.location.reload();
-        //     });
 
         sendFormData('book/add', data)
         .then(res => {
@@ -102,7 +77,6 @@ class AddBook extends Component
 
     render()
     {
-        // const { IdBook, Title, Language, Pages, IsColorful, Author_IdAuthor, Path, Description } = this.state;
         const { authors, genres } = this.state;
         return (
             <div

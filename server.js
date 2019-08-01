@@ -3,13 +3,11 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = process.env.PORT || 5000;
 const bcrypt = require('bcryptjs');
-// const User = require('./model/User');
 const jwt = require('jsonwebtoken');
 const { check, validationResult } = require('express-validator/check');
 const Genre = require('./model/Genre');
 
 const multer  = require('multer')
-// const upload = multer({ dest: 'docs/' })
 const path = require('path')
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -560,13 +558,7 @@ app.delete('/book/delete/:id', (req, res) =>
 		{
 			console.error(err.message);
 		}
-
-		// res.status(200).send({
-		// 	status: "Deleted",
-		// 	Hired: 0
-		// });
 	});
-		//-------------
 
 	let query = `DELETE FROM Ebook
     	WHERE IdBook = ?;`;
@@ -718,13 +710,11 @@ app.put('/genre/update/:id', (req, res) => {
 		{ where: { IdGenre: req.params.id } }
 	  )
 		.then(result => {
-			//   handleResult(result)
 			console.log(result);
 			res.send({status: result[0]});
 		}
 		)
 		.catch(err =>
-		//   handleError(err)
 			console.log(err.message)
 		)
 });
